@@ -9,7 +9,16 @@ const studentRoutes = require("./routes/student");
 const app = express();
 
 // Middlewares
-app.use(cors());
+app.use(
+  cors({
+    origin: [
+      "http://127.0.0.1:5500",
+      "http://localhost:5500",
+      "https://your-frontend-domain.com",
+    ],
+  }),
+);
+
 app.use(express.json());
 
 // Routes
