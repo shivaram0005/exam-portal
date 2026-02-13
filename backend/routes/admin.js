@@ -1,0 +1,188 @@
+const express = require("express");
+const db = require("../db");
+const router = express.Router();
+
+/* =====================================================
+   1️⃣ GET ALL STUDENT ATTEMPTS (SUMMARY)
+===================================================== */
+router.get("/results", async (req, res) => {
+  try {
+    const result = await db.query(`
+      SELECT 
+        id,
+        email,
+        mcq_score,
+        theory_score,
+        thesis_score,
+        total_score,
+        status,
+        submitted_at
+      FROM exam_attempts
+      ORDER BY submitted_at DESC
+    `);
+
+    res.json(result.rows);
+  } catch (err) {
+    console.error("FETCH RESULTS ERROR:", err);
+    res.status(500).json({ message: "Failed to fetch results" });
+  }
+});
+
+/* =====================================================
+   2️⃣ GET DETAILED ANSWERS FOR ONE ATTEMPT
+===================================================== */
+router.get("/results/:attemptId", async (req, res) => {
+  try {
+    const { attemptId } = req.params;
+
+    /* ===== MCQ + THEORY ===== */
+    const answers = await db.query(
+      `
+      SELECT 
+        q.id AS question_id,
+        q.type,
+        q.question,
+        q.correct_answer,
+        ea.answer,
+        ea.marks
+      FROM exam_answers ea
+      JOIN exam_questions q ON ea.question_id = q.id
+      WHERE ea.exam_attempt_id = $1
+      ORDER BY q.id
+    `,
+      [attemptId],
+    );
+
+    /* ===== THESIS ===== */
+    const thesisAnswers = await db.query(
+      `
+      SELECT
+        tq.id AS thesis_question_id,
+        tq.question,
+        ta.answer,
+        ta.marks
+      FROM thesis_answers ta
+      JOIN thesis_questions tq 
+        ON ta.thesis_question_id = tq.id
+      WHERE ta.exam_attempt_id = $1
+      ORDER BY tq.id
+    `,
+      [attemptId],
+    );
+
+    res.json({
+      mcqTheory: answers.rows,
+      thesis: thesisAnswers.rows,
+    });
+  } catch (err) {
+    console.error("FETCH DETAILED RESULT ERROR:", err);
+    res.status(500).json({ message: "Failed to fetch detailed result" });
+  }
+});
+
+/* =====================================================
+   3️⃣ ADD STUDENT EMAIL
+===================================================== */
+router.post("/add-student", async (req, res) => {
+  try {
+    const { email } = req.body;
+
+    if (!email) {
+      return res.status(400).json({ message: "Email is required" });
+    }
+
+    await db.query("INSERT INTO allowed_users (email) VALUES ($1)", [email]);
+
+    res.json({ message: "Student added successfully" });
+  } catch (err) {
+    res.status(400).json({ message: "Email already exists" });
+  }
+});
+
+/* =====================================================
+   4️⃣ ADD QUESTION TO EXAM
+===================================================== */
+router.post("/exams/:examId/questions", async (req, res) => {
+  try {
+    const { examId } = req.params;
+    const { type, question, options, correct_answer, max_marks } = req.body;
+
+    if (!type || !question) {
+      return res.status(400).json({ message: "Type and question required" });
+    }
+
+    const result = await db.query(
+      `
+      INSERT INTO exam_questions
+      (exam_id, type, question, options, correct_answer, max_marks)
+      VALUES ($1,$2,$3,$4,$5,$6)
+      RETURNING *
+    `,
+      [
+        examId,
+        type,
+        question,
+        type === "MCQ" ? JSON.stringify(options) : null,
+        type === "MCQ" ? correct_answer : null,
+        max_marks || 1,
+      ],
+    );
+
+    res.json(result.rows[0]);
+  } catch (err) {
+    console.error("ADD QUESTION ERROR:", err);
+    res.status(500).json({ message: "Failed to add question" });
+  }
+});
+
+/* =====================================================
+   5️⃣ ADD THESIS
+===================================================== */
+router.post("/exams/:examId/theses", async (req, res) => {
+  try {
+    const { examId } = req.params;
+    const { title, problem_statement, case_study } = req.body;
+
+    const result = await db.query(
+      `
+      INSERT INTO theses
+      (exam_id, title, problem_statement, case_study)
+      VALUES ($1,$2,$3,$4)
+      RETURNING *
+    `,
+      [examId, title, problem_statement, case_study],
+    );
+
+    res.json(result.rows[0]);
+  } catch (err) {
+    console.error("ADD THESIS ERROR:", err);
+    res.status(500).json({ message: "Failed to add thesis" });
+  }
+});
+
+/* =====================================================
+   6️⃣ ADD THESIS QUESTION
+===================================================== */
+router.post("/theses/:thesisId/questions", async (req, res) => {
+  try {
+    const { thesisId } = req.params;
+    const { question, max_marks } = req.body;
+
+    const result = await db.query(
+      `
+      INSERT INTO thesis_questions
+      (thesis_id, question, max_marks)
+      VALUES ($1,$2,$3)
+      RETURNING *
+    `,
+      [thesisId, question, max_marks],
+    );
+
+    res.json(result.rows[0]);
+  } catch (err) {
+    console.error("ADD THESIS QUESTION ERROR:", err);
+    res.status(500).json({ message: "Failed to add thesis question" });
+  }
+});
+
+module.exports = router;

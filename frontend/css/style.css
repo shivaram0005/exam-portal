@@ -1,0 +1,195 @@
+/* ================================
+   GLOBAL RESET & BASE STYLES
+================================ */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Segoe UI", Tahoma, Arial, sans-serif;
+}
+
+body {
+  background: #f4f6f8;
+  color: #222;
+  min-height: 100vh;
+}
+
+/* ================================
+   COMMON CONTAINER
+================================ */
+.container {
+  max-width: 900px;
+  margin: 40px auto;
+  background: #ffffff;
+  padding: 30px 40px;
+  border-radius: 8px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+}
+
+h1,
+h2 {
+  margin-bottom: 20px;
+  color: #111;
+}
+
+/* ================================
+   BUTTONS
+================================ */
+button {
+  background: #0d6efd;
+  color: #fff;
+  border: none;
+  padding: 10px 18px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 15px;
+  transition: background 0.2s ease;
+}
+
+button:hover {
+  background: #0b5ed7;
+}
+
+button:disabled {
+  background: #999;
+  cursor: not-allowed;
+}
+
+/* ================================
+   INPUTS & TEXTAREA
+================================ */
+input[type="email"],
+input[type="text"],
+textarea {
+  width: 100%;
+  padding: 10px;
+  margin-top: 8px;
+  margin-bottom: 16px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+textarea {
+  min-height: 120px;
+  resize: vertical;
+}
+
+input:focus,
+textarea:focus {
+  outline: none;
+  border-color: #0d6efd;
+}
+
+/* ================================
+   LOGIN PAGE
+================================ */
+.login-box {
+  max-width: 420px;
+  margin: 100px auto;
+  background: #ffffff;
+  padding: 30px;
+  border-radius: 8px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+}
+
+.login-box h2 {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.login-box button {
+  width: 100%;
+}
+
+/* ================================
+   EXAM PAGE
+================================ */
+.question {
+  margin-bottom: 25px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid #e6e6e6;
+}
+
+.question p {
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+
+.options label {
+  display: block;
+  margin-bottom: 6px;
+  cursor: pointer;
+}
+
+.timer {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background: #111;
+  color: #fff;
+  padding: 10px 16px;
+  border-radius: 6px;
+  font-weight: bold;
+}
+
+/* ================================
+   ADMIN PANEL
+================================ */
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+.admin-table th,
+.admin-table td {
+  border: 1px solid #ddd;
+  padding: 10px;
+  text-align: left;
+  font-size: 14px;
+}
+
+.admin-table th {
+  background: #f1f1f1;
+}
+
+.admin-table tr:nth-child(even) {
+  background: #fafafa;
+}
+
+/* ================================
+   ALERTS
+================================ */
+.alert {
+  padding: 12px;
+  margin-bottom: 20px;
+  border-radius: 5px;
+  font-size: 14px;
+}
+
+.alert.success {
+  background: #d1e7dd;
+  color: #0f5132;
+}
+
+.alert.error {
+  background: #f8d7da;
+  color: #842029;
+}
+
+/* ================================
+   RESPONSIVE
+================================ */
+@media (max-width: 600px) {
+  .container {
+    margin: 20px;
+    padding: 20px;
+  }
+
+  .timer {
+    position: static;
+    margin-bottom: 20px;
+    text-align: center;
+  }
+}

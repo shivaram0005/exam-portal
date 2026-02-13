@@ -1,0 +1,114 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Admin Panel</title>
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+
+  <body>
+    <div class="container">
+      <h2>Admin Panel</h2>
+
+      <!-- ========================= -->
+      <!-- ADD STUDENT EMAIL -->
+      <!-- ========================= -->
+      <h3>Add Student Email</h3>
+      <input type="email" id="studentEmail" placeholder="student@example.com" />
+      <button onclick="addStudent()">Add Student</button>
+
+      <hr />
+
+      <!-- ========================= -->
+      <!-- ADD QUESTION TO EXAM -->
+      <!-- ========================= -->
+      <h3>Add Question</h3>
+
+      <label>Exam ID</label>
+      <input id="examId" placeholder="Enter Exam ID (e.g. 1)" />
+
+      <label>Question Type</label>
+      <select id="qType">
+        <option value="MCQ">MCQ</option>
+        <option value="THEORY">THEORY</option>
+      </select>
+
+      <label>Question</label>
+      <textarea id="qText" placeholder="Enter question"></textarea>
+
+      <label>Options (MCQ only, comma separated)</label>
+      <textarea id="qOptions" placeholder="Option1, Option2"></textarea>
+
+      <label>Correct Answer (MCQ only)</label>
+      <input id="qAnswer" placeholder="Correct answer" />
+
+      <label>Max Marks</label>
+      <input id="qMarks" type="number" placeholder="1" />
+
+      <button onclick="addQuestion()">Add Question</button>
+
+      <hr />
+      <hr />
+
+      <h3>Add Thesis</h3>
+
+      <label>Exam ID</label>
+      <input id="thesisExamId" type="number" placeholder="Exam ID" />
+
+      <label>Thesis Title</label>
+      <input id="thesisTitle" placeholder="Title" />
+
+      <label>Problem Statement</label>
+      <textarea id="thesisProblem"></textarea>
+
+      <label>Case Study</label>
+      <textarea id="thesisCase"></textarea>
+
+      <button onclick="addThesis()">Add Thesis</button>
+
+      <hr />
+
+      <h3>Add Thesis Question</h3>
+
+      <label>Thesis ID</label>
+      <input id="thesisId" type="number" placeholder="Thesis ID" />
+
+      <label>Question</label>
+      <textarea id="thesisQuestion"></textarea>
+
+      <label>Max Marks</label>
+      <input id="thesisMarks" type="number" placeholder="Marks" />
+
+      <button onclick="addThesisQuestion()">Add Thesis Question</button>
+
+      <!-- ========================= -->
+      <!-- STUDENT ATTEMPTS TABLE -->
+      <!-- ========================= -->
+      <h3>Student Attempts</h3>
+
+      <table class="admin-table">
+        <thead>
+          <tr>
+            <th>Email</th>
+            <th>MCQ</th>
+            <th>Theory</th>
+            <th>Thesis</th>
+            <th>Total</th>
+            <th>Status</th>
+            <th>View</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+
+      <hr />
+
+      <!-- ========================= -->
+      <!-- DETAILED RESULT VIEW -->
+      <!-- ========================= -->
+      <h3>Detailed Result</h3>
+      <div id="detailedResult"></div>
+    </div>
+
+    <script src="js/admin.js"></script>
+  </body>
+</html>
