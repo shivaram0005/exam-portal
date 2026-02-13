@@ -1,4 +1,4 @@
-const API_BASE = "http://localhost:5000/api/auth";
+const API_BASE = "https://exam-portal-7xlx.onrender.com/api/auth";
 
 async function login() {
   const email = document.getElementById("email").value.trim();

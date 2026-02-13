@@ -1,4 +1,4 @@
-const API_BASE = "http://localhost:5000/api/admin";
+const API_BASE = "https://exam-portal-7xlx.onrender.com/api/admin";
 
 /* ==============================
    LOAD ATTEMPT SUMMARY

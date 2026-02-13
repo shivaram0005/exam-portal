@@ -1,5 +1,5 @@
 const EXAM_ID = 1;
-const BASE_URL = "http://localhost:5000/api/student";
+const BASE_URL = "https://exam-portal-7xlx.onrender.com/api/student";
 
 const params = new URLSearchParams(window.location.search);
 const studentEmail = params.get("email");
@@ -18,7 +18,7 @@ let thesisAnswers = {};
 
 async function startExam() {
   const res = await fetch(
-    `http://localhost:5000/api/student/exams/${EXAM_ID}/start`,
+    `https://exam-portal-7xlx.onrender.com/api/student/exams/${EXAM_ID}/start`,
     {
       method: "POST",
       headers: { "Content-Type": "application/json" },
