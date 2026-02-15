@@ -275,22 +275,6 @@ router.get("/seed", async (req, res) => {
 /* =====================================================
    RESET EVERYTHING (PRODUCTION RESET)
 ===================================================== */
-router.get("/force-reset", async (req, res) => {
-  try {
-    await db.query("TRUNCATE exam_answers RESTART IDENTITY CASCADE");
-    await db.query("TRUNCATE thesis_answers RESTART IDENTITY CASCADE");
-    await db.query("TRUNCATE exam_attempts RESTART IDENTITY CASCADE");
-    await db.query("TRUNCATE exam_questions RESTART IDENTITY CASCADE");
-    await db.query("TRUNCATE thesis_questions RESTART IDENTITY CASCADE");
-    await db.query("TRUNCATE theses RESTART IDENTITY CASCADE");
-    await db.query("TRUNCATE exams RESTART IDENTITY CASCADE");
-    await db.query("TRUNCATE allowed_users RESTART IDENTITY CASCADE");
 
-    res.json({ message: "🔥 DATABASE FULLY RESET SUCCESS" });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: err.message });
-  }
-});
 
 module.exports = router;
