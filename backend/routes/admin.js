@@ -272,23 +272,31 @@ router.get("/seed", async (req, res) => {
 
   res.json({ message: "Seed inserted" });
 });
-router.get("/reset-data", async (req, res) => {
+/* =====================================================
+   RESET EVERYTHING (PRODUCTION RESET)
+===================================================== */
+router.delete("/reset-all", async (req, res) => {
   try {
-    await pool.query(`
-      DELETE FROM thesis_answers;
-      DELETE FROM answers;
-      DELETE FROM exam_attempts;
-      DELETE FROM thesis_questions;
-      DELETE FROM theses;
-      DELETE FROM exam_questions;
-      DELETE FROM allowed_users;
-    `);
+    await db.query("BEGIN");
 
-    res.json({ message: "All demo data deleted successfully" });
+    await db.query("TRUNCATE TABLE thesis_answers CASCADE");
+    await db.query("TRUNCATE TABLE exam_answers CASCADE");
+    await db.query("TRUNCATE TABLE exam_attempts CASCADE");
+    await db.query("TRUNCATE TABLE thesis_questions CASCADE");
+    await db.query("TRUNCATE TABLE theses CASCADE");
+    await db.query("TRUNCATE TABLE exam_questions CASCADE");
+    await db.query("TRUNCATE TABLE exams CASCADE");
+    await db.query("TRUNCATE TABLE allowed_users CASCADE");
+
+    await db.query("COMMIT");
+
+    res.json({ message: "🔥 Database fully reset successfully!" });
   } catch (err) {
+    await db.query("ROLLBACK");
     console.error("RESET ERROR:", err);
-    res.status(500).json({ error: err.message });
+    res.status(500).json({ message: "Reset failed" });
   }
 });
+
 
 module.exports = router;
