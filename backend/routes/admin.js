@@ -272,5 +272,23 @@ router.get("/seed", async (req, res) => {
 
   res.json({ message: "Seed inserted" });
 });
+router.get("/reset-data", async (req, res) => {
+  try {
+    await pool.query(`
+      DELETE FROM thesis_answers;
+      DELETE FROM answers;
+      DELETE FROM exam_attempts;
+      DELETE FROM thesis_questions;
+      DELETE FROM theses;
+      DELETE FROM exam_questions;
+      DELETE FROM allowed_users;
+    `);
+
+    res.json({ message: "All demo data deleted successfully" });
+  } catch (err) {
+    console.error("RESET ERROR:", err);
+    res.status(500).json({ error: err.message });
+  }
+});
 
 module.exports = router;
