@@ -1,5 +1,6 @@
 const express = require("express");
 const db = require("../db");
+
 const router = express.Router();
 const pool = require("../db");
 
@@ -261,6 +262,15 @@ router.get("/setup-db", async (req, res) => {
   } catch (err) {
     console.error("SETUP ERROR:", err);
     res.status(500).json({ error: err.message });
+  }
+});
+router.get("/check-thesis", async (req, res) => {
+  try {
+    const result = await db.query("SELECT * FROM theses");
+    res.json(result.rows);
+  } catch (err) {
+    console.error("CHECK THESIS ERROR:", err);
+    res.status(500).json({ message: "Error checking thesis" });
   }
 });
 
