@@ -298,16 +298,17 @@ router.post("/create-exam", async (req, res) => {
   }
 });
 
-// DELETE ONLY QUESTIONS (SAFE CLEAN)
 router.delete("/clear-questions", async (req, res) => {
   try {
+    await pool.query("DELETE FROM thesis_answers");
+    await pool.query("DELETE FROM answers");
     await pool.query("DELETE FROM thesis_questions");
-    await pool.query("DELETE FROM theses");
+    await pool.query("DELETE FROM thesis");
     await pool.query("DELETE FROM questions");
 
-    res.json({ message: "🔥 All demo questions deleted successfully" });
-  } catch (error) {
-    console.error("CLEAR QUESTIONS ERROR:", error);
+    res.json({ message: "🔥 Demo questions cleared successfully" });
+  } catch (err) {
+    console.error("CLEAR QUESTIONS ERROR:", err);
     res.status(500).json({ message: "Failed to clear questions" });
   }
 });
