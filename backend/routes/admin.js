@@ -277,44 +277,47 @@ router.get("/seed", async (req, res) => {
 ===================================================== */
 
 // CREATE EXAM
-// router.post("/create-exam", async (req, res) => {
-//   try {
-//     const { title, description } = req.body;
-
-//     const result = await pool.query(
-//       `INSERT INTO exams (title, description, status)
-//        VALUES ($1, $2, 'LIVE')
-//        RETURNING *`,
-//       [title, description],
-//     );
-
-//     res.json({
-//       message: "Exam created successfully",
-//       exam: result.rows[0],
-//     });
-//   } catch (err) {
-//     console.error("CREATE EXAM ERROR:", err);
-//     res.status(500).json({ message: "Failed to create exam" });
-//   }
-// });
-
-router.get("/force-reset", async (req, res) => {
+router.post("/create-exam", async (req, res) => {
   try {
-    await db.query("TRUNCATE exam_answers RESTART IDENTITY CASCADE");
-    await db.query("TRUNCATE thesis_answers RESTART IDENTITY CASCADE");
-    await db.query("TRUNCATE exam_attempts RESTART IDENTITY CASCADE");
-    await db.query("TRUNCATE exam_questions RESTART IDENTITY CASCADE");
-    await db.query("TRUNCATE thesis_questions RESTART IDENTITY CASCADE");
-    await db.query("TRUNCATE theses RESTART IDENTITY CASCADE");
-    await db.query("TRUNCATE exams RESTART IDENTITY CASCADE");
-    await db.query("TRUNCATE allowed_users RESTART IDENTITY CASCADE");
+    const { title, description } = req.body;
 
-    res.json({ message: "🔥 DATABASE FULLY RESET SUCCESS" });
+    const result = await pool.query(
+      `INSERT INTO exams (title, description, status)
+       VALUES ($1, $2, 'LIVE')
+       RETURNING *`,
+      [title, description],
+    );
+
+    res.json({
+      message: "Exam created successfully",
+      exam: result.rows[0],
+    });
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: err.message });
+    console.error("CREATE EXAM ERROR:", err);
+    res.status(500).json({ message: "Failed to create exam" });
   }
 });
+
+
+// delete eveything route
+
+// router.get("/force-reset", async (req, res) => {
+//   try {
+//     await db.query("TRUNCATE exam_answers RESTART IDENTITY CASCADE");
+//     await db.query("TRUNCATE thesis_answers RESTART IDENTITY CASCADE");
+//     await db.query("TRUNCATE exam_attempts RESTART IDENTITY CASCADE");
+//     await db.query("TRUNCATE exam_questions RESTART IDENTITY CASCADE");
+//     await db.query("TRUNCATE thesis_questions RESTART IDENTITY CASCADE");
+//     await db.query("TRUNCATE theses RESTART IDENTITY CASCADE");
+//     await db.query("TRUNCATE exams RESTART IDENTITY CASCADE");
+//     await db.query("TRUNCATE allowed_users RESTART IDENTITY CASCADE");
+
+//     res.json({ message: "🔥 DATABASE FULLY RESET SUCCESS" });
+//   } catch (err) {
+//     console.error(err);
+//     res.status(500).json({ error: err.message });
+//   }
+// });
 
 
 module.exports = router;
