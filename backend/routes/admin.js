@@ -185,4 +185,82 @@ router.post("/theses/:thesisId/questions", async (req, res) => {
   }
 });
 
+// TEMPORARY ROUTE – CREATE ALL TABLES
+router.get("/setup-db", async (req, res) => {
+  try {
+    await pool.query(`
+
+      CREATE TABLE IF NOT EXISTS allowed_users (
+        id SERIAL PRIMARY KEY,
+        email TEXT UNIQUE NOT NULL
+      );
+
+      CREATE TABLE IF NOT EXISTS exams (
+        id SERIAL PRIMARY KEY,
+        title TEXT,
+        description TEXT
+      );
+
+      CREATE TABLE IF NOT EXISTS exam_questions (
+        id SERIAL PRIMARY KEY,
+        exam_id INTEGER REFERENCES exams(id) ON DELETE CASCADE,
+        type TEXT,
+        question TEXT,
+        options JSONB,
+        correct_answer TEXT,
+        max_marks INTEGER
+      );
+
+      CREATE TABLE IF NOT EXISTS theses (
+        id SERIAL PRIMARY KEY,
+        exam_id INTEGER REFERENCES exams(id) ON DELETE CASCADE,
+        title TEXT,
+        problem_statement TEXT,
+        case_study TEXT
+      );
+
+      CREATE TABLE IF NOT EXISTS thesis_questions (
+        id SERIAL PRIMARY KEY,
+        thesis_id INTEGER REFERENCES theses(id) ON DELETE CASCADE,
+        question TEXT,
+        max_marks INTEGER
+      );
+
+      CREATE TABLE IF NOT EXISTS exam_attempts (
+        id SERIAL PRIMARY KEY,
+        email TEXT,
+        exam_id INTEGER,
+        mcq_score INTEGER DEFAULT 0,
+        theory_score INTEGER DEFAULT 0,
+        thesis_score INTEGER DEFAULT 0,
+        total_score INTEGER DEFAULT 0,
+        status TEXT,
+        submitted_at TIMESTAMP
+      );
+
+      CREATE TABLE IF NOT EXISTS answers (
+        id SERIAL PRIMARY KEY,
+        attempt_id INTEGER REFERENCES exam_attempts(id) ON DELETE CASCADE,
+        question_id INTEGER,
+        answer TEXT,
+        marks INTEGER
+      );
+
+      CREATE TABLE IF NOT EXISTS thesis_answers (
+        id SERIAL PRIMARY KEY,
+        attempt_id INTEGER REFERENCES exam_attempts(id) ON DELETE CASCADE,
+        thesis_question_id INTEGER,
+        answer TEXT,
+        marks INTEGER
+      );
+
+    `);
+
+    res.json({ message: "Database setup completed" });
+  } catch (err) {
+    console.error("SETUP ERROR:", err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
 module.exports = router;
