@@ -1,6 +1,7 @@
 const express = require("express");
 const db = require("../db");
 const router = express.Router();
+const pool = require("../config/db");
 
 /* =====================================================
    1️⃣ GET ALL STUDENT ATTEMPTS (SUMMARY)
