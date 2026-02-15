@@ -300,13 +300,15 @@ router.post("/create-exam", async (req, res) => {
 
 router.delete("/clear-questions", async (req, res) => {
   try {
-    await pool.query("DELETE FROM thesis_answers");
-    await pool.query("DELETE FROM answers");
-    await pool.query("DELETE FROM thesis_questions");
-    await pool.query("DELETE FROM thesis");
-    await pool.query("DELETE FROM questions");
+    await pool.query("TRUNCATE TABLE thesis_answers RESTART IDENTITY CASCADE");
+    await pool.query("TRUNCATE TABLE answers RESTART IDENTITY CASCADE");
+    await pool.query(
+      "TRUNCATE TABLE thesis_questions RESTART IDENTITY CASCADE",
+    );
+    await pool.query("TRUNCATE TABLE thesis RESTART IDENTITY CASCADE");
+    await pool.query("TRUNCATE TABLE questions RESTART IDENTITY CASCADE");
 
-    res.json({ message: "🔥 Demo questions cleared successfully" });
+    res.json({ message: "🔥 ALL QUESTIONS FULLY CLEARED" });
   } catch (err) {
     console.error("CLEAR QUESTIONS ERROR:", err);
     res.status(500).json({ message: "Failed to clear questions" });
