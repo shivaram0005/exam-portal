@@ -275,7 +275,7 @@ router.get("/seed", async (req, res) => {
 /* =====================================================
    RESET EVERYTHING (PRODUCTION RESET)
 ===================================================== */
-const pool = require("../db");
+
 
 // CREATE EXAM
 router.post("/create-exam", async (req, res) => {
