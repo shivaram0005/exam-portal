@@ -277,42 +277,44 @@ router.get("/seed", async (req, res) => {
 ===================================================== */
 
 // CREATE EXAM
-router.post("/create-exam", async (req, res) => {
+// router.post("/create-exam", async (req, res) => {
+//   try {
+//     const { title, description } = req.body;
+
+//     const result = await pool.query(
+//       `INSERT INTO exams (title, description, status)
+//        VALUES ($1, $2, 'LIVE')
+//        RETURNING *`,
+//       [title, description],
+//     );
+
+//     res.json({
+//       message: "Exam created successfully",
+//       exam: result.rows[0],
+//     });
+//   } catch (err) {
+//     console.error("CREATE EXAM ERROR:", err);
+//     res.status(500).json({ message: "Failed to create exam" });
+//   }
+// });
+
+router.get("/force-reset", async (req, res) => {
   try {
-    const { title, description } = req.body;
+    await db.query("TRUNCATE exam_answers RESTART IDENTITY CASCADE");
+    await db.query("TRUNCATE thesis_answers RESTART IDENTITY CASCADE");
+    await db.query("TRUNCATE exam_attempts RESTART IDENTITY CASCADE");
+    await db.query("TRUNCATE exam_questions RESTART IDENTITY CASCADE");
+    await db.query("TRUNCATE thesis_questions RESTART IDENTITY CASCADE");
+    await db.query("TRUNCATE theses RESTART IDENTITY CASCADE");
+    await db.query("TRUNCATE exams RESTART IDENTITY CASCADE");
+    await db.query("TRUNCATE allowed_users RESTART IDENTITY CASCADE");
 
-    const result = await pool.query(
-      `INSERT INTO exams (title, description, status)
-       VALUES ($1, $2, 'LIVE')
-       RETURNING *`,
-      [title, description],
-    );
-
-    res.json({
-      message: "Exam created successfully",
-      exam: result.rows[0],
-    });
+    res.json({ message: "🔥 DATABASE FULLY RESET SUCCESS" });
   } catch (err) {
-    console.error("CREATE EXAM ERROR:", err);
-    res.status(500).json({ message: "Failed to create exam" });
+    console.error(err);
+    res.status(500).json({ error: err.message });
   }
 });
 
-router.delete("/clear-questions", async (req, res) => {
-  try {
-    await pool.query("TRUNCATE TABLE thesis_answers RESTART IDENTITY CASCADE");
-    await pool.query("TRUNCATE TABLE answers RESTART IDENTITY CASCADE");
-    await pool.query(
-      "TRUNCATE TABLE thesis_questions RESTART IDENTITY CASCADE",
-    );
-    await pool.query("TRUNCATE TABLE thesis RESTART IDENTITY CASCADE");
-    await pool.query("TRUNCATE TABLE questions RESTART IDENTITY CASCADE");
-
-    res.json({ message: "🔥 ALL QUESTIONS FULLY CLEARED" });
-  } catch (err) {
-    console.error("CLEAR QUESTIONS ERROR:", err);
-    res.status(500).json({ message: "Failed to clear questions" });
-  }
-});
 
 module.exports = router;
