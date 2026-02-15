@@ -191,26 +191,25 @@ router.post("/theses/:thesisId/questions", async (req, res) => {
 router.get("/setup-db", async (req, res) => {
   try {
     await pool.query(`
+      CREATE TABLE IF NOT EXISTS exams (
+        id SERIAL PRIMARY KEY,
+        title TEXT NOT NULL,
+        description TEXT
+      );
 
       CREATE TABLE IF NOT EXISTS allowed_users (
         id SERIAL PRIMARY KEY,
         email TEXT UNIQUE NOT NULL
       );
 
-      CREATE TABLE IF NOT EXISTS exams (
-        id SERIAL PRIMARY KEY,
-        title TEXT,
-        description TEXT
-      );
-
       CREATE TABLE IF NOT EXISTS exam_questions (
         id SERIAL PRIMARY KEY,
         exam_id INTEGER REFERENCES exams(id) ON DELETE CASCADE,
-        type TEXT,
-        question TEXT,
+        type TEXT NOT NULL,
+        question TEXT NOT NULL,
         options JSONB,
         correct_answer TEXT,
-        max_marks INTEGER
+        max_marks INTEGER DEFAULT 1
       );
 
       CREATE TABLE IF NOT EXISTS theses (
@@ -224,54 +223,54 @@ router.get("/setup-db", async (req, res) => {
       CREATE TABLE IF NOT EXISTS thesis_questions (
         id SERIAL PRIMARY KEY,
         thesis_id INTEGER REFERENCES theses(id) ON DELETE CASCADE,
-        question TEXT,
-        max_marks INTEGER
+        question TEXT NOT NULL,
+        max_marks INTEGER DEFAULT 10
       );
 
       CREATE TABLE IF NOT EXISTS exam_attempts (
         id SERIAL PRIMARY KEY,
         email TEXT,
-        exam_id INTEGER,
+        exam_id INTEGER REFERENCES exams(id),
         mcq_score INTEGER DEFAULT 0,
         theory_score INTEGER DEFAULT 0,
         thesis_score INTEGER DEFAULT 0,
         total_score INTEGER DEFAULT 0,
-        status TEXT,
-        submitted_at TIMESTAMP
+        status TEXT DEFAULT 'STARTED',
+        submitted_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       );
 
       CREATE TABLE IF NOT EXISTS answers (
         id SERIAL PRIMARY KEY,
         attempt_id INTEGER REFERENCES exam_attempts(id) ON DELETE CASCADE,
-        question_id INTEGER,
+        question_id INTEGER REFERENCES exam_questions(id) ON DELETE CASCADE,
         answer TEXT,
-        marks INTEGER
+        marks INTEGER DEFAULT 0
       );
 
       CREATE TABLE IF NOT EXISTS thesis_answers (
         id SERIAL PRIMARY KEY,
         attempt_id INTEGER REFERENCES exam_attempts(id) ON DELETE CASCADE,
-        thesis_question_id INTEGER,
+        thesis_question_id INTEGER REFERENCES thesis_questions(id) ON DELETE CASCADE,
         answer TEXT,
-        marks INTEGER
+        marks INTEGER DEFAULT 0
       );
-
     `);
 
-    res.json({ message: "Database setup completed" });
+    res.json({ message: "Database setup completed successfully" });
   } catch (err) {
     console.error("SETUP ERROR:", err);
     res.status(500).json({ error: err.message });
   }
 });
-router.get("/check-thesis", async (req, res) => {
-  try {
-    const result = await db.query("SELECT * FROM theses");
-    res.json(result.rows);
-  } catch (err) {
-    console.error("CHECK THESIS ERROR:", err);
-    res.status(500).json({ message: "Error checking thesis" });
-  }
+
+router.get("/seed", async (req, res) => {
+  await pool.query(`
+    INSERT INTO exams (title, description)
+    VALUES ('Cyber Security Exam', 'Production Exam')
+    ON CONFLICT DO NOTHING;
+  `);
+
+  res.json({ message: "Seed inserted" });
 });
 
 module.exports = router;
