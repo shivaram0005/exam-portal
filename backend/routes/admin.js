@@ -275,6 +275,28 @@ router.get("/seed", async (req, res) => {
 /* =====================================================
    RESET EVERYTHING (PRODUCTION RESET)
 ===================================================== */
+const pool = require("../db");
 
+// CREATE EXAM
+router.post("/create-exam", async (req, res) => {
+  try {
+    const { title, description } = req.body;
+
+    const result = await pool.query(
+      `INSERT INTO exams (title, description, status)
+       VALUES ($1, $2, 'LIVE')
+       RETURNING *`,
+      [title, description],
+    );
+
+    res.json({
+      message: "Exam created successfully",
+      exam: result.rows[0],
+    });
+  } catch (err) {
+    console.error("CREATE EXAM ERROR:", err);
+    res.status(500).json({ message: "Failed to create exam" });
+  }
+});
 
 module.exports = router;
