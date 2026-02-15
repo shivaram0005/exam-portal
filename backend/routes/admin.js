@@ -275,28 +275,22 @@ router.get("/seed", async (req, res) => {
 /* =====================================================
    RESET EVERYTHING (PRODUCTION RESET)
 ===================================================== */
-router.delete("/reset-all", async (req, res) => {
+router.get("/force-reset", async (req, res) => {
   try {
-    await db.query("BEGIN");
+    await db.query("TRUNCATE exam_answers RESTART IDENTITY CASCADE");
+    await db.query("TRUNCATE thesis_answers RESTART IDENTITY CASCADE");
+    await db.query("TRUNCATE exam_attempts RESTART IDENTITY CASCADE");
+    await db.query("TRUNCATE exam_questions RESTART IDENTITY CASCADE");
+    await db.query("TRUNCATE thesis_questions RESTART IDENTITY CASCADE");
+    await db.query("TRUNCATE theses RESTART IDENTITY CASCADE");
+    await db.query("TRUNCATE exams RESTART IDENTITY CASCADE");
+    await db.query("TRUNCATE allowed_users RESTART IDENTITY CASCADE");
 
-    await db.query("TRUNCATE TABLE thesis_answers CASCADE");
-    await db.query("TRUNCATE TABLE exam_answers CASCADE");
-    await db.query("TRUNCATE TABLE exam_attempts CASCADE");
-    await db.query("TRUNCATE TABLE thesis_questions CASCADE");
-    await db.query("TRUNCATE TABLE theses CASCADE");
-    await db.query("TRUNCATE TABLE exam_questions CASCADE");
-    await db.query("TRUNCATE TABLE exams CASCADE");
-    await db.query("TRUNCATE TABLE allowed_users CASCADE");
-
-    await db.query("COMMIT");
-
-    res.json({ message: "🔥 Database fully reset successfully!" });
+    res.json({ message: "🔥 DATABASE FULLY RESET SUCCESS" });
   } catch (err) {
-    await db.query("ROLLBACK");
-    console.error("RESET ERROR:", err);
-    res.status(500).json({ message: "Reset failed" });
+    console.error(err);
+    res.status(500).json({ error: err.message });
   }
 });
-
 
 module.exports = router;
