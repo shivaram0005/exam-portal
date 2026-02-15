@@ -276,7 +276,6 @@ router.get("/seed", async (req, res) => {
    RESET EVERYTHING (PRODUCTION RESET)
 ===================================================== */
 
-
 // CREATE EXAM
 router.post("/create-exam", async (req, res) => {
   try {
@@ -296,6 +295,20 @@ router.post("/create-exam", async (req, res) => {
   } catch (err) {
     console.error("CREATE EXAM ERROR:", err);
     res.status(500).json({ message: "Failed to create exam" });
+  }
+});
+
+// DELETE ONLY QUESTIONS (SAFE CLEAN)
+router.delete("/clear-questions", async (req, res) => {
+  try {
+    await pool.query("DELETE FROM thesis_questions");
+    await pool.query("DELETE FROM theses");
+    await pool.query("DELETE FROM questions");
+
+    res.json({ message: "🔥 All demo questions deleted successfully" });
+  } catch (error) {
+    console.error("CLEAR QUESTIONS ERROR:", error);
+    res.status(500).json({ message: "Failed to clear questions" });
   }
 });
 
