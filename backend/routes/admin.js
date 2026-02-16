@@ -281,7 +281,7 @@ router.get("/create-exam", async (req, res) => {
   try {
     const result = await db.query(
       "INSERT INTO exams (title, description) VALUES ($1, $2) RETURNING *",
-      ["Cyber Security Exam", "Production Exam"]
+      ["Cyber Security Exam", "Production Exam"],
     );
 
     res.json(result.rows[0]);
@@ -291,10 +291,11 @@ router.get("/create-exam", async (req, res) => {
   }
 });
 
+// FIX SCHEMA (adds is_live column if missing)
 router.get("/fix-exam-schema", async (req, res) => {
   try {
     await db.query(
-      "ALTER TABLE exams ADD COLUMN IF NOT EXISTS is_live BOOLEAN DEFAULT true"
+      "ALTER TABLE exams ADD COLUMN IF NOT EXISTS is_live BOOLEAN DEFAULT true",
     );
 
     res.json({ message: "Exam table fixed" });
@@ -304,6 +305,17 @@ router.get("/fix-exam-schema", async (req, res) => {
   }
 });
 
+// ✅ MAKE EXAM LIVE
+router.get("/make-exam-live", async (req, res) => {
+  try {
+    await db.query("UPDATE exams SET is_live = true WHERE id = 1");
+
+    res.json({ message: "Exam is now LIVE" });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: err.message });
+  }
+});
 
 // delete eveything route
 
