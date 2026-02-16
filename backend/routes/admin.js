@@ -277,19 +277,19 @@ router.get("/seed", async (req, res) => {
 ===================================================== */
 
 // CREATE EXAM
-// router.get("/create-exam", async (req, res) => {
-//   try {
-//     const result = await db.query(
-//       "INSERT INTO exams (title, description) VALUES ($1, $2) RETURNING *",
-//       ["Cyber Security Exam", "Production Exam"]
-//     );
+router.get("/create-exam", async (req, res) => {
+  try {
+    const result = await db.query(
+      "INSERT INTO exams (title, description) VALUES ($1, $2) RETURNING *",
+      ["Cyber Security Exam", "Production Exam"]
+    );
 
-//     res.json(result.rows[0]);
-//   } catch (err) {
-//     console.error(err);
-//     res.status(500).json({ error: err.message });
-//   }
-// });
+    res.json(result.rows[0]);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: err.message });
+  }
+});
 
 router.get("/fix-exam-schema", async (req, res) => {
   try {
