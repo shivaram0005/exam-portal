@@ -280,8 +280,8 @@ router.get("/seed", async (req, res) => {
 router.get("/create-exam", async (req, res) => {
   try {
     const result = await db.query(
-      "INSERT INTO exams (title, description, is_live) VALUES ($1, $2, $3) RETURNING *",
-      ["Cyber Security Exam", "Production Exam", true],
+      "INSERT INTO exams (title, description) VALUES ($1, $2) RETURNING *",
+      ["Cyber Security Exam", "Production Exam"]
     );
 
     res.json(result.rows[0]);
@@ -290,6 +290,7 @@ router.get("/create-exam", async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
+
 
 // delete eveything route
 
