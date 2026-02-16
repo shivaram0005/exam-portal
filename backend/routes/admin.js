@@ -277,14 +277,27 @@ router.get("/seed", async (req, res) => {
 ===================================================== */
 
 // CREATE EXAM
-router.get("/create-exam", async (req, res) => {
+// router.get("/create-exam", async (req, res) => {
+//   try {
+//     const result = await db.query(
+//       "INSERT INTO exams (title, description) VALUES ($1, $2) RETURNING *",
+//       ["Cyber Security Exam", "Production Exam"]
+//     );
+
+//     res.json(result.rows[0]);
+//   } catch (err) {
+//     console.error(err);
+//     res.status(500).json({ error: err.message });
+//   }
+// });
+
+router.get("/fix-exam-schema", async (req, res) => {
   try {
-    const result = await db.query(
-      "INSERT INTO exams (title, description) VALUES ($1, $2) RETURNING *",
-      ["Cyber Security Exam", "Production Exam"]
+    await db.query(
+      "ALTER TABLE exams ADD COLUMN IF NOT EXISTS is_live BOOLEAN DEFAULT true"
     );
 
-    res.json(result.rows[0]);
+    res.json({ message: "Exam table fixed" });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: err.message });
