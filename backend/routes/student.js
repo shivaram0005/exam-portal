@@ -11,7 +11,7 @@ router.get("/exams/:examId/content", async (req, res) => {
 
     // Check exam is LIVE
     const exam = await db.query(
-      "SELECT id, title, description FROM exams WHERE id = $1 AND status = 'LIVE'",
+      "SELECT id, title, description FROM exams WHERE id = $1 AND is_live = true",
       [examId],
     );
 
