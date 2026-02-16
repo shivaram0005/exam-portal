@@ -281,20 +281,15 @@ router.post("/create-exam", async (req, res) => {
   try {
     const { title, description } = req.body;
 
-    const result = await pool.query(
-      `INSERT INTO exams (title, description, status)
-       VALUES ($1, $2, 'LIVE')
-       RETURNING *`,
-      [title, description],
+    const result = await db.query(
+      "INSERT INTO exams (title, description, is_live) VALUES ($1, $2, $3) RETURNING *",
+      [title, description, true]
     );
 
-    res.json({
-      message: "Exam created successfully",
-      exam: result.rows[0],
-    });
+    res.json(result.rows[0]);
   } catch (err) {
     console.error("CREATE EXAM ERROR:", err);
-    res.status(500).json({ message: "Failed to create exam" });
+    res.status(500).json({ error: err.message });
   }
 });
 
