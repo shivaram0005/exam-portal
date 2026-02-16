@@ -83,7 +83,7 @@ router.post("/exams/:examId/start", async (req, res) => {
 
     // Check exam is LIVE
     const exam = await db.query(
-      "SELECT id FROM exams WHERE id = $1 AND status = 'LIVE'",
+      "SELECT id FROM exams WHERE id = $1 AND is_live = true",
       [examId],
     );
 
