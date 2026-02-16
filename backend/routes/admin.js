@@ -277,22 +277,19 @@ router.get("/seed", async (req, res) => {
 ===================================================== */
 
 // CREATE EXAM
-router.post("/create-exam", async (req, res) => {
+router.get("/create-exam", async (req, res) => {
   try {
-    const { title, description } = req.body;
-
     const result = await db.query(
       "INSERT INTO exams (title, description, is_live) VALUES ($1, $2, $3) RETURNING *",
-      [title, description, true]
+      ["Cyber Security Exam", "Production Exam", true],
     );
 
     res.json(result.rows[0]);
   } catch (err) {
-    console.error("CREATE EXAM ERROR:", err);
+    console.error(err);
     res.status(500).json({ error: err.message });
   }
 });
-
 
 // delete eveything route
 
@@ -313,6 +310,5 @@ router.post("/create-exam", async (req, res) => {
 //     res.status(500).json({ error: err.message });
 //   }
 // });
-
 
 module.exports = router;
