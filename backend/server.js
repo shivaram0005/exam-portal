@@ -13,7 +13,7 @@ app.use(
   cors({
     origin: [
       "http://localhost:5500",
-      "https://cyber-security-exam-01.netlify.app/",
+      "https://cyber-security-exam-01.netlify.app",
     ],
     methods: ["GET", "POST", "PATCH", "PUT", "DELETE"],
     credentials: true,
